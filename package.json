@@ -1,0 +1,50 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "NODE_PATH=./resources/assets/jsx NODE_ENV=test mocha ./resources/assets/tests",
+    "build": "NODE_ENV=production gulp",
+    "dev": "gulp",
+    "email": "gulp email",
+    "email-dev": "NODE_ENV=production gulp email"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "foundation-emails": "^2.2.1",
+    "lodash": "^4.17.2",
+    "react": "^15.4.1",
+    "react-addons-css-transition-group": "^15.4.1",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.4.1",
+    "react-redux": "^4.4.6",
+    "react-router": "^2.8.1",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.1.0"
+  },
+  "devDependencies": {
+    "assets-webpack-plugin": "^3.5.0",
+    "babel-core": "^6.18.0",
+    "babel-loader": "^6.2.7",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-react-optimize": "^1.0.1",
+    "expect.js": "^0.3.1",
+    "bootstrap-sass": "^3.3.7",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-clean-css": "^2.0.13",
+    "gulp-if": "^2.0.1",
+    "gulp-inline-css": "^3.1.0",
+    "gulp-inline-source": "^3.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-rev": "^7.1.2",
+    "gulp-rev-origin": "^1.0.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^2.0.0",
+    "inky": "^1.3.7",
+    "mocha": "^3.1.2",
+    "redux-devtools": "^3.3.1",
+    "webpack": "^1.13.3"
+  }
+}
