@@ -9,11 +9,13 @@ publicPath = __dirname+'/public';
 function ErrorHandler() {};
 
 ErrorHandler.prototype.apply = function(compiler) {
+
 	compiler.plugin("should-emit", function(compilation) {
 		if(compilation.errors.length > 0){
 			return false;
 		}
 	});
+
 	compiler.plugin("compilation", function(compilation) {
 		compilation.plugin("should-record", function() {
 			if(compilation.errors.length > 0){
@@ -25,6 +27,7 @@ ErrorHandler.prototype.apply = function(compiler) {
 			}
 		});
 	});
+
 };
 
 module.exports = {
@@ -102,6 +105,7 @@ if(NODE_ENV == 'production'){
 					assets['js/'+key+'.js'] = 'js/'+assets[key].js.slice(module.exports.output.publicPath.length);
 					delete assets[key];
 				}
+
 				return JSON.stringify(assets);
 			}
 		})

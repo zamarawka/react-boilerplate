@@ -11,30 +11,35 @@ clean = require('gulp-clean'),
 webpack = require('webpack'),
 gutil = require('gulp-util'),
 exec = require('child_process').exec,
-fs = require('fs'),
-assetsPath = __dirname+'/resources/assets',
-publicPath = __dirname+'/public',
-viewsPath = __dirname+'/resources/views',
-NODE_ENV = process.env.NODE_ENV || 'development',
-firstRun = true;
+fs = require('fs');
 
 var inky = require('inky'),
 inlineCss = require('gulp-inline-css'),
 inlinesource = require('gulp-inline-source'),
 rename = require('gulp-rename');
 
+var assetsPath = __dirname+'/resources/assets',
+publicPath = __dirname+'/public',
+viewsPath = __dirname+'/resources/views',
+NODE_ENV = process.env.NODE_ENV || 'development',
+firstRun = true;
+
 if(NODE_ENV == 'development'){
 	livereload.listen();
 }
 
 function say(e){
-	var obj = (typeof e === 'string')? { message: '', title: e }: e;
-	var phrase = 'osascript -e \'display notification "'+obj.message.replace(/"/g, '').replace(/'/g, '')+'"';
+	var obj = (typeof e === 'string')? { message: '', title: e } : e,
+	phrase = 'osascript -e \'display notification "'+obj.message.replace(/"/g, '').replace(/'/g, '')+'"';
+
 	if(obj.title)
 		phrase += ' with title "'+obj.title.replace(/"/g, '').replace(/'/g, '')+'"';
+
 	if(obj.subtitle)
 		phrase += ' subtitle "'+obj.subtitle.replace(/"/g, '').replace(/'/g, '')+'"';
+
 	phrase += "'";
+
 	exec(phrase);
 }
 
@@ -44,7 +49,6 @@ function errorHandler(e){
 		title: e.plugin+' error',
 		subtitle: 'Line number:'+e.line+':'+e.column
 	});
-	// exec('osascript -e \'display notification "'+e.messageOriginal.replace(/"/g, '').replace(/'/g, '')+'" with title "'+e.plugin+' error" subtitle "Line number:'+e.line+':'+e.column+'"\'');
 	console.log(e);
 }
 
@@ -59,9 +63,10 @@ var jsTask = function(e){
 gulp.task('js', ['clean'], jsTask);
 
 gulp.task('webpack', ['clean'], function(cb){
-	webpack(require('./webpack.config.js'), (err, stats)=>{
+	webpack(require('./webpack.config.js'), (err, stats) => {
 		if(err)
 			throw new gutil.PluginError("webpack", err);
+
 		gutil.log("[webpack]", stats.toString({
 			hash: true,
 			version: true,
@@ -71,10 +76,12 @@ gulp.task('webpack', ['clean'], function(cb){
 			chunkModules: false,
 			chunks: false
 		}));
+
 		if(cb && firstRun){
 			firstRun = false;
 			cb();
 		}
+
 	});
 });
 
@@ -100,6 +107,7 @@ gulp.task('watch', ['sass', 'js', 'webpack'], function(){
 	gulp.watch(publicPath+'/build/js/**/*.js').on('change', livereload.changed);
 	gulp.watch(viewsPath+'/**/*.php').on('change', livereload.changed);
 	gulp.watch(publicPath+'/**/*.html').on('change', livereload.changed);
+
 	say({
 		message: '',
 		title: 'Dev build ready',
