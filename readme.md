@@ -95,6 +95,20 @@ const StateButton = require('components/Elements/StateButton');
 ```
 And don't think about levels of files structure.
 
+## Revisions of files
+Is's also includes revisions of files in production build via
+```
+./public/build/manifest.json
+```
+As result you must use it in your views as
+```html
+<script src="{{elixir('js/index.js')}}"></script>
+```
+Result of elixir function is
+```
+/build/js/index-[hash].js
+```
+
 ## License
 
 This is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
