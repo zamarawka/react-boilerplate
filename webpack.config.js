@@ -42,19 +42,10 @@ module.exports = {
 	},
 	module: {
 		loaders: [{
-			test: /\.jsx$/,
+			test: /\.js(x)?$/,
 			include: assetsPath+'/jsx',
 			loader: 'babel',
 			query: {
-				presets: ['react', 'es2015'],
-				cacheDirectory: true
-			}
-		}, {
-			test: /\.js$/,
-			include: assetsPath+'/jsx',
-			loader: 'babel',
-			query: {
-				presets: ['es2015'],
 				cacheDirectory: true
 			}
 		}]
