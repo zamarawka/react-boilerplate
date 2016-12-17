@@ -1,4 +1,4 @@
-var gulp = require('gulp'),
+const gulp = require('gulp'),
 livereload = require('gulp-livereload'),
 uglify = require('gulp-uglify'),
 cleanCss = require('gulp-clean-css'),
@@ -10,10 +10,10 @@ revOrigin = require('gulp-rev-origin'),
 clean = require('gulp-clean'),
 webpack = require('webpack'),
 gutil = require('gulp-util'),
-exec = require('child_process').exec,
+say = require('mac-notify'),
 fs = require('fs');
 
-var inky = require('inky'),
+const inky = require('inky'),
 inlineCss = require('gulp-inline-css'),
 inlinesource = require('gulp-inline-source'),
 rename = require('gulp-rename');
@@ -24,35 +24,21 @@ viewsPath = __dirname+'/resources/views',
 NODE_ENV = process.env.NODE_ENV || 'development',
 firstRun = true;
 
-if(NODE_ENV == 'development'){
+if (NODE_ENV == 'development') {
 	livereload.listen();
 }
 
-function say(e){
-	var obj = (typeof e === 'string')? { message: '', title: e } : e,
-	phrase = 'osascript -e \'display notification "'+obj.message.replace(/"/g, '').replace(/'/g, '')+'"';
-
-	if(obj.title)
-		phrase += ' with title "'+obj.title.replace(/"/g, '').replace(/'/g, '')+'"';
-
-	if(obj.subtitle)
-		phrase += ' subtitle "'+obj.subtitle.replace(/"/g, '').replace(/'/g, '')+'"';
-
-	phrase += "'";
-
-	exec(phrase);
-}
-
-function errorHandler(e){
+function errorHandler(e) {
 	say({
 		message: e.messageOriginal,
 		title: e.plugin+' error',
 		subtitle: 'Line number:'+e.line+':'+e.column
 	});
+
 	console.log(e);
 }
 
-var jsTask = function(e){
+var jsTask = function(e) {
 	return gulp.src((typeof e == 'object')? e.path : assetsPath+'/js/**/*.js')
 		.pipe(gulpif(NODE_ENV == 'production', uglify().on('error', errorHandler)))
 		.pipe(gulpif(NODE_ENV == 'production', rev()))
@@ -62,10 +48,21 @@ var jsTask = function(e){
 };
 gulp.task('js', ['clean'], jsTask);
 
-gulp.task('webpack', ['clean'], function(cb){
+gulp.task('webpack', ['clean'], function(cb) {
 	webpack(require('./webpack.config.js'), (err, stats) => {
 		if(err)
 			throw new gutil.PluginError("webpack", err);
+
+		if(stats.hasErrors()){
+			var jsonStats = stats.toJson();
+
+			if(jsonStats.errors.length > 0){
+				say({
+					title: 'Webpack',
+					subtitle: 'Bundle error'
+				});
+			}
+		}
 
 		gutil.log("[webpack]", stats.toString({
 			hash: true,
@@ -85,7 +82,7 @@ gulp.task('webpack', ['clean'], function(cb){
 	});
 });
 
-var sassTask =  function(e){
+var sassTask =  function(e) {
 	return gulp.src([assetsPath+'/sass/index.scss'])
 		.pipe(sass({precision: 8}).on('error', errorHandler))
 		.pipe(pf())
@@ -115,12 +112,12 @@ gulp.task('watch', ['sass', 'js', 'webpack'], function(){
 	});
 });
 
-gulp.task('clean', function(){
+gulp.task('clean', function() {
 	return gulp.src(publicPath+'/build', {read: false})
 		.pipe(clean());
 });
 
-gulp.task('rev', ['sass', 'js', 'webpack'], function(cb){
+gulp.task('rev', ['sass', 'js', 'webpack'], function(cb) {
 	var webpack = require(assetsPath+'/manifest/webpack.json');
 	var js = require(assetsPath+'/manifest/js.json');
 	var sass = require(assetsPath+'/manifest/sass.json');
@@ -144,7 +141,7 @@ gulp.task('rev', ['sass', 'js', 'webpack'], function(cb){
 	});
 });
 
-gulp.task('rev:origin', ['sass', 'js', 'webpack'], function(cb){
+gulp.task('rev:origin', ['sass', 'js', 'webpack'], function(cb) {
 	return gulp.src(publicPath+'/build/**/*.*')
 		.pipe(revOrigin())
 		.pipe(gulp.dest(publicPath+'/build'));
@@ -152,14 +149,14 @@ gulp.task('rev:origin', ['sass', 'js', 'webpack'], function(cb){
 
 var defaultTasks = [];
 
-if(NODE_ENV != 'development')
+if (NODE_ENV != 'development')
 	defaultTasks.push('rev');
 else
 	defaultTasks.push('watch', 'rev:origin');
 
 gulp.task('default', defaultTasks);
 
-var emailSassTask = function(e){
+var emailSassTask = function(e) {
 	return gulp.src((typeof e == 'object')? e.path : assetsPath+'/email/scss/*.scss')
 		.pipe(sass({
 			precision: 8
@@ -177,7 +174,7 @@ var emailSassTask = function(e){
 };
 gulp.task('email:sass', emailSassTask);
 
-var emailHtmlTask = function(e){
+var emailHtmlTask = function(e) {
 	return gulp.src((typeof e == 'object')? e.path : assetsPath+'/email/*.html')
 		.pipe(inlinesource())
 		.pipe(inky())
@@ -188,7 +185,7 @@ var emailHtmlTask = function(e){
 };
 gulp.task('email:html', ['email:sass'], emailHtmlTask);
 
-gulp.task('email:build', ['email:sass', 'email:html'], function(cb){
+gulp.task('email:build', ['email:sass', 'email:html'], function(cb) {
 	gulp.src(assetsPath+'/email/dist/*.html')
 		.pipe(rename({
 			suffix: '.blade',
@@ -202,7 +199,7 @@ gulp.task('email:build', ['email:sass', 'email:html'], function(cb){
 		cb();
 })
 
-gulp.task('email:watch', ['email:sass', 'email:html'], function(){
+gulp.task('email:watch', ['email:sass', 'email:html'], function() {
 	gulp.watch(assetsPath+'/email/scss/**/*.scss', ['email:html']);
 	gulp.watch(assetsPath+'/email/*.html', emailHtmlTask);
 

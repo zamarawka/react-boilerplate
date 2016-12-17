@@ -1,8 +1,8 @@
-var webpack = require('webpack'),
+const webpack = require('webpack'),
 path = require('path'),
 AssetsPlugin = require('assets-webpack-plugin');
-exec = require('child_process').exec,
-NODE_ENV = process.env.NODE_ENV || 'development',
+
+var NODE_ENV = process.env.NODE_ENV || 'development',
 assetsPath = __dirname+'/resources/assets',
 publicPath = __dirname+'/public';
 
@@ -18,11 +18,7 @@ ErrorHandler.prototype.apply = function(compiler) {
 
 	compiler.plugin("compilation", function(compilation) {
 		compilation.plugin("should-record", function() {
-			if(compilation.errors.length > 0){
-				compilation.errors.map(function(e){
-					if(e.error.loc)
-						exec('osascript -e \'display notification "'+(e.dependencies[0]).request+'" with title "'+e.name+' error" subtitle "Line number:'+e.error.loc.line+'"\'');
-				});
+			if(compilation.errors.length > 0) {
 				return false;
 			}
 		});
